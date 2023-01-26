@@ -10,47 +10,48 @@ interface BadResponse {
   apiMessage: string;
 }
 
+interface Response {
+  result: string;
+}
+
+interface BadApiResponse {
+  message: string;
+}
+
+type ApiResponse = Response | BadApiResponse;
+
 const whoisHandler = async (
   req: NextApiRequest,
-  // what is the best approach to type this response?
   res: NextApiResponse<Whois | BadResponse>
 ) => {
-  console.log('whoisHandler');
-  const { query, method } = req;
+  const { query } = req;
   const domain = query.domain as string;
 
-  switch (method) {
-    case "GET":
-      const response = await fetch(
-        `https://api.apilayer.com/whois/check?domain=${domain}`,
-        {
-          headers: {
-            apikey: process.env.APILAYER_API_KEY,
-          },
-        }
-      );
-      const data = await response.json();
+  const headers = new Headers();
+  headers.set('apikey', process.env.APILAYER_API_KEY as string);
 
-      console.log(data);
+  const response = await fetch(
+    `https://api.apilayer.com/whois/check?domain=${domain}`,
+    {
+      headers,
+    }
+  );
+  const data = (await response.json()) as ApiResponse;
 
-      if (response.status !== 200) {
-        res.status(400).json({
-          message: "Bad response from API.",
-          apiMessage: data?.message,
-        });
-        return;
-      }
+  if (response.status !== 200) {
+    const { message } = data as BadApiResponse;
 
-      const { result } = data;
+    res.status(400).json({
+      message: "Bad response from API.",
+      apiMessage: message,
+    });
 
-      res.status(200).json({ domain, isAvailable: result !== "registered" });
-
-      break;
-
-    default:
-      res.setHeader("Allow", ["GET"]);
-      res.status(405).end(`Method ${method} Not Allowed`);
+    return;
   }
+
+  const { result } = data as Response;
+
+  res.status(200).json({ domain, isAvailable: result !== "registered" });
 };
 
 export default whoisHandler;

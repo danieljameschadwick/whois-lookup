@@ -7,22 +7,12 @@
 
 /** @type {import("next").NextConfig} */
 const config = {
-  // @TODO: fix type errors for apis etc
-  // reactStrictMode: true,
-  reactStrictMode: false,
+  reactStrictMode: true,
   /* If trying out the experimental appDir, comment the i18n config out
    * @see https://github.com/vercel/next.js/issues/41980 */
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
   },
-  typescript: {
-      // @TODO: remove typing issues, testing Vercel builds
-      ignoreBuildErrors: true,
-  },
-  eslint: {
-    // @TODO: remove typing issues, testing Vercel builds
-    ignoreDuringBuilds: true,
-  }
 };
 export default config;

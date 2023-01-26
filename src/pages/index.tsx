@@ -2,6 +2,10 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
 
+interface ApiResponse {
+  isAvailable: boolean;
+}
+
 const Home: NextPage = () => {
   const [domain, setDomain] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -29,9 +33,11 @@ const Home: NextPage = () => {
     }
 
     // validate w/ backend
-    const response = await fetch(`/api/whois?domain=${domain}`);
+    const response = await fetch(
+      `/api/whois?domain=${domain}`
+    );
     // const data: { isAvailable: boolean } = await response.json();
-    const data: any = await response.json();
+    const data = (await response.json()) as ApiResponse;
     const { isAvailable } = data;
 
     console.log(data);
@@ -55,17 +61,15 @@ const Home: NextPage = () => {
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
             whois <span className="text-[hsl(280,100%,70%)]">lookup</span>
           </h1>
-  
+
           <form
-            className="flex flex-col mb-4 rounded bg-white px-8 pt-6 pb-8 shadow-md"
-            onSubmit={handleSubmit}
+            className="mb-4 flex flex-col rounded bg-white px-8 pt-6 pb-8 shadow-md"
+            onSubmit={() => handleSubmit}
           >
-            <label className="mb-2 text-sm">
-              Domain:
-            </label>
+            <label className="mb-2 text-sm">Domain:</label>
             <input
               type="text"
-              className="focus:shadow-outline w-full mb-4 appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+              className="focus:shadow-outline mb-4 w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
               onChange={(event) => setDomain(event.currentTarget.value)}
             />
 
