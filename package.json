@@ -8,7 +8,8 @@
     "lint": "next lint",
     "start": "next start",
     "vercel": "vercel",
-    "vercel:dev": "vercel dev"
+    "vercel:dev": "vercel dev",
+    "vercel:build": "vercel build"
   },
   "dependencies": {
     "next": "13.1.2",
