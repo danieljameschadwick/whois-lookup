@@ -1,30 +1,31 @@
 package handler
 
 import (
-  "fmt"
-  "io/ioutil"
-  "log"
-  "net/http"
-  "os"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
 )
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-  client := &http.Client{}
-  req, err := http.NewRequest("GET", "https://api.apilayer.com/whois/check?domain=danielchadwick.co.uk", nil)
-  req.Header.Add("apikey", os.Getenv("APILAYER_API_KEY"))
+	client := &http.Client{}
+	url := fmt.Sprintf("https://api.apilayer.com/whois/check?domain=%s", r.URL.Query().Get("domain"))
+	req, err := http.NewRequest("GET", url, nil)
+	req.Header.Add("apikey", os.Getenv("APILAYER_API_KEY"))
 
-  res, err := client.Do(req)
-  
-  if err != nil {
-      fmt.Print(err.Error())
-      os.Exit(1)
-  }
+	res, err := client.Do(req)
 
-  responseData, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
 
-  if err != nil {
-      log.Fatal(err)
-  }
+	responseData, err := ioutil.ReadAll(res.Body)
 
-  fmt.Fprintf(w, string(responseData))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Fprintf(w, string(responseData))
 }
