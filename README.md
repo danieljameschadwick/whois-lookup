@@ -33,7 +33,7 @@ yarn dev
 To run the v2 API:
 
 ```bash
-yarn vercel
+yarn vercel:dev
 ```
 
 > // NOTE: Need to replace this dependency with a non-vendor locked runtime.
