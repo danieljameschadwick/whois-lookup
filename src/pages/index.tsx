@@ -1,6 +1,6 @@
+import React, { useState } from "react";
 import { type NextPage } from "next";
 import Head from "next/head";
-import { useState } from "react";
 
 interface ApiResponse {
   isAvailable: boolean;
@@ -14,17 +14,7 @@ const Home: NextPage = () => {
   );
   const [isAvailable, setIsAvailable] = useState<boolean | null>(false);
 
-  const handleSubmit = async (event: Event) => {
-    event.preventDefault();
-
-    if (loading) return;
-
-    setLoading(true);
-    setIsAvailable(null);
-    setLastQueriedDomain(null);
-
-    console.log(domain);
-
+  const fetchWhois = async () => {
     if (!domain) {
       console.error("Invalid domain passed.");
       setLoading(false);
@@ -40,12 +30,22 @@ const Home: NextPage = () => {
     const data = (await response.json()) as ApiResponse;
     const { isAvailable } = data;
 
-    console.log(data);
-
     // api will return TRUE / FALSE
     setLastQueriedDomain(domain);
     setIsAvailable(isAvailable);
     setLoading(false);
+  }
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
+
+    if (loading) return;
+
+    setLoading(true);
+    setIsAvailable(null);
+    setLastQueriedDomain(null);
+
+    void fetchWhois();
   };
 
   return (
@@ -64,7 +64,7 @@ const Home: NextPage = () => {
 
           <form
             className="mb-4 flex flex-col rounded bg-white px-8 pt-6 pb-8 shadow-md"
-            onSubmit={() => handleSubmit}
+            onSubmit={handleSubmit}
           >
             <label className="mb-2 text-sm">Domain:</label>
             <input
