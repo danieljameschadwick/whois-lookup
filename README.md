@@ -27,3 +27,13 @@ Then, to run the application:
 ```bash
 yarn dev
 ```
+
+### V2 API
+
+To run the v2 API:
+
+```bash
+yarn vercel
+```
+
+> // NOTE: Need to replace this dependency with a non-vendor locked runtime.
